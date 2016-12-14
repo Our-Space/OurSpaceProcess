@@ -14,7 +14,7 @@ module.exports = {
     ],
     output: {
         path: BUILD_PATH,
-        publicPath: process.env.NODE_ENV === 'production' ? "" : "https://localhost:8080/",
+        publicPath: process.env.NODE_ENV === 'production' ? "" : "http://localhost:8080/",
         filename: "bundle.js"
     },
     devtool: 'source-map',
@@ -34,5 +34,8 @@ module.exports = {
                 loaders: ["style", "css", "sass"]
             }
         ]
-    }
+    },
+    plugins: [new HtmlWebpackPlugin({
+        template: "./index.ejs"
+    })]
 };
