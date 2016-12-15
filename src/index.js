@@ -111,12 +111,29 @@ const Description = ({data, node}) => (
     </div>
 )
 
+// &.Define { fill: #6fd0e6 }
+// &.Ideate { fill: #229fdd }
+// &.Test { fill: #185c9c }
+// &.Critique { fill: #f25152 }
+// &.Reflect { fill: #f27c7d }
+
+const Legend = () => (
+    <div className="Legend">
+        <div className="key Define"><div></div><p>Define</p></div>
+        <div className="key Ideate"><div></div><p>Ideate</p></div>
+        <div className="key Test"><div></div><p>Test</p></div>
+        <div className="key Critique"><div></div><p>Critique</p></div>
+        <div className="key Reflection"><div></div><p>Reflection</p></div>
+    </div>
+)
+
 class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {data: null, node: "a"}
+        this.state = {data: null, node: "a", splash: true}
         this.onSelectNode = this.onSelectNode.bind(this)
+        this.onStart = this.onStart.bind(this)
 
         const DOCS_KEY = "13WuL_ouXk2CwY46u0xWfmt58SwdPXRmAX94XDE41lbU"
 
@@ -157,20 +174,31 @@ class App extends React.Component {
 
     }
 
+    onStart() {
+        this.setState((prevState) => ({...prevState, splash: false}))
+    }
+
     onSelectNode(node) {
         this.setState((prevState) => ({...prevState, node: node}))
     }
 
     render() {
-        if (this.state.data === null) {
+        if (this.state.splash === true) {
+            return (
+                <div className="splash" onClick={() => this.onStart()}>
+                    <img src="images/explainer.png" />
+                </div>
+            )
+        }
+        else if (this.state.data === null) {
             return (
                 <h1>Loading</h1>
             )
         }
         else {
-            console.log("Loaded")
             return (
-                <div>
+                <div className="process">
+                    <Legend/>
                     <Viz data={this.state.data} selected={this.state.node} onSelectNode={this.onSelectNode} />
                     <Description data={this.state.data} node={this.state.node} />
                 </div>

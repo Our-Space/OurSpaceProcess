@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, 'src');
@@ -37,5 +38,5 @@ module.exports = {
     },
     plugins: [new HtmlWebpackPlugin({
         template: "./index.ejs"
-    })]
+    }), new CopyWebpackPlugin([{ from: 'images', to: 'images'}])]
 };
