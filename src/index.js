@@ -36,7 +36,7 @@ const y = (i, n, height) => {
 const widthPerSequenceEntry = 200;
 const height = 500;
 
-const Viz = ({data, onSelectNode}) => {
+const Viz = ({data, selected, onSelectNode}) => {
     console.log(data)
 
     const numSequenceEntries = data.sequence.length
@@ -53,9 +53,10 @@ const Viz = ({data, onSelectNode}) => {
         const yCoord = y(i, n, height)
 
         return (
-            <g className="node" onClick={() => onSelectNode(key)}>
+            <g className={key === selected ? "node selected" : "node"} onClick={() => onSelectNode(key)}>
                 <text x={xCoord} y={x % 2 === 0 ? yCoord-60 : yCoord+80} textAnchor="middle">{data.nodes[key].title}</text>
-                <circle key={key} r="40" cx={xCoord} cy={yCoord} fill="black" />
+                <circle className={"outer " + data.nodes[key].colour} key={key} r="30" cx={xCoord} cy={yCoord} fill="black" />
+                <circle className="hollow" key={key + "hollow"} r="20" cx={xCoord} cy={yCoord} fill="white" />
             </g>
         )
     })
@@ -160,7 +161,7 @@ class App extends React.Component {
             console.log("Loaded")
             return (
                 <div>
-                    <Viz data={this.state.data} onSelectNode={this.onSelectNode} />
+                    <Viz data={this.state.data} selected={this.state.node} onSelectNode={this.onSelectNode} />
                     <Description data={this.state.data} node={this.state.node} />
                 </div>
             )
