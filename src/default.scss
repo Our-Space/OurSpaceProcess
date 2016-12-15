@@ -1,5 +1,86 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.Viz {
+  margin: 50px 0;
+  overflow: scroll;
+  width: 100%;
+}
+
+svg {
+  height: 400px;
+}
+
 .node {
   text {
-	font: 500 25px "Helvetica";
+	font: 300 25px "Oswald";
+	text-transform: uppercase;
+  }
+
+  &:hover {
+	cursor: pointer;
+  }
+}
+
+.Description {
+
+  width: 100%;
+
+  .header, .description, .feedback {
+	vertical-align: top;
+	display: inline-block;
+	width: 33%;
+	padding: 0 25px;
+  }
+
+  .header, .description {
+	border-right: 2px solid #2c2956;
+	padding-bottom: 40px;
+  }
+
+  .header {
+
+	text-align: right;
+	text-transform: uppercase;
+
+	color: #2c2956;
+
+	h1 {
+	  font: 500 35px "Oswald";
+	  line-height: 45px;
+	}
+
+	h2 {
+	  font: 300 28px "Oswald";
+	}
+  }
+
+  .description p, .feedback p {
+	font: 500 0.9rem "Crimson Text";
+	line-height: 1.6rem;
+  }
+
+  .description {
+
+  }
+
+  .feedback {
+
+  }
+
+
+
+  p {
+	margin-top: 5px;
+	font: 500 20px "Source Sans Pro";
   }
 }

@@ -1,55 +1,24 @@
 import React from 'react'
 import {render} from 'react-dom'
 import * as d3 from 'd3'
+import Tabletop from "tabletop"
 require("./default.scss")
-
-const data = {
-    nodes: {
-        a: {
-            title:"Initial idea"
-        },
-        b: {
-            title: "Group formation"
-        },
-        c: {
-            title:"First pivot"
-        },
-        d: {
-            title:"Continue on orignal path"
-        },
-        e: {
-            title:"Test"
-        }
-    },
-    edges: [
-        ["a","b"],
-        ["b", "c"],
-        ["b", "d"],
-        ["d", "e"]
-    ],
-    sequences: [
-        ["a"],
-        ["b"],
-        ["c", "d"],
-        ["e"]
-    ]
-};
 
 const getNodePosition = (data, node) => {
 
     // Find the index of the entry in which the node is found
-    for (let j = 0; j < data.sequences.length; j++) {
+    for (let j = 0; j < data.sequence.length; j++) {
 
        // If the node is found in the sequence entry
-       if (data.sequences[j].indexOf(node) > -1) {
+       if (data.sequence[j].indexOf(node) > -1) {
            // The x position is the index of the entry
            const x = j
 
            // The position of the node in the entry
-           const i = data.sequences[j].indexOf(node)
+           const i = data.sequence[j].indexOf(node)
 
            // The number of nodes in that entry
-           const n = data.sequences[j].length
+           const n = data.sequence[j].length
 
            return {x, i, n}
        }
@@ -63,18 +32,18 @@ const y = (i, n, height) => {
     return height / n * i + height / n / 2
 }
 
-const width = 1280;
+const widthPerSequenceEntry = 200;
 const height = 500;
 
-const numSequenceEntries = data.sequences.length
+const Viz = ({data, onSelectNode}) => {
+    console.log(data)
 
-const xScale = d3.scaleBand()
-    .domain(d3.range(0, data.sequences.length))
-    .range([0, width])
+    const numSequenceEntries = data.sequence.length
+    const width = widthPerSequenceEntry * (numSequenceEntries-1)
 
-
-
-const Viz = ({onSelectNode}) => {
+    const xScale = d3.scaleBand()
+        .domain(d3.range(0, numSequenceEntries))
+        .range([0, width])
 
     const nodes = Object.keys(data.nodes).map(key => {
 
@@ -84,8 +53,8 @@ const Viz = ({onSelectNode}) => {
 
         return (
             <g className="node" onClick={() => onSelectNode(key)}>
-                <text x={xCoord} y={yCoord-75} textAnchor="middle">{data.nodes[key].title}</text>
-                <circle key={key} r="50" cx={xCoord} cy={yCoord} fill="black" />
+                <text x={xCoord} y={x % 2 === 0 ? yCoord-60 : yCoord+80} textAnchor="middle">{data.nodes[key].title}</text>
+                <circle key={key} r="40" cx={xCoord} cy={yCoord} fill="black" />
             </g>
         )
     })
@@ -100,21 +69,33 @@ const Viz = ({onSelectNode}) => {
         )
     })
 
-    return (<svg viewBox={"0 0 " + width + " " + height}>
-            <g className="edges" transform="translate(100,0)">
-                {edges}
-            </g>
-            <g className="nodes" transform="translate(100,0)">
-                {nodes}
-            </g>
-        </svg>
+    return (
+        <div className="Viz">
+            <svg viewBox={"0 0 " + width + " " + (height+100)}>
+                <g className="edges" transform="translate(100,50)">
+                    {edges}
+                </g>
+                <g className="nodes" transform="translate(100,50)">
+                    {nodes}
+                </g>
+            </svg>
+        </div>
     )
 }
 
 
-const Description = ({node}) => (
+const Description = ({data, node}) => (
     <div className="Description">
-        {data.nodes[node].title}
+        <div className="header">
+            <h1>{data.nodes[node].title}</h1>
+            <h2>/ {data.nodes[node].time}</h2>
+        </div>
+        <div className="description">
+            <p>{data.nodes[node].description}</p>
+        </div>
+        <div className="feedback">
+            <p>{data.nodes[node].feedback}</p>
+        </div>
     </div>
 )
 
@@ -122,21 +103,67 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {node: "a"}
+        this.state = {data: null, node: "a"}
         this.onSelectNode = this.onSelectNode.bind(this)
+
+        const DOCS_KEY = "13WuL_ouXk2CwY46u0xWfmt58SwdPXRmAX94XDE41lbU"
+
+        Tabletop.init({
+            key: DOCS_KEY,
+            callback: (sheetsData) => {
+
+                let data = {
+                    nodes: {},
+                    edges: [],
+                    sequence: {"100": []}
+                }
+
+                sheetsData.forEach(row => {
+                    data.nodes[row.id] = row
+
+                    let nodeEdges = row.connectedTo.split(",")
+                    if (nodeEdges[0] !== "") {
+                        nodeEdges.forEach(to => {
+                            data.edges.push([row.id, to])
+                        })
+                    }
+                    if (typeof data.sequence[row.sequence] === 'undefined') {
+                        data.sequence[row.sequence] = []
+                    }
+                    if (row.sequence === "") data.sequence["100"].push(row.id)
+                    else data.sequence[row.sequence].push(row.id)
+                })
+
+                data.sequence = Object.values(data.sequence)
+
+                this.setState(prevState => ({data: data, node: "a"}))
+                console.log(data)
+
+            },
+            simpleSheet: true
+        })
+
     }
 
     onSelectNode(node) {
-        this.setState((prevState) => ({node: node}))
+        this.setState((prevState) => ({...prevState, node: node}))
     }
 
     render() {
-        return (
-            <div>
-                <Viz onSelectNode={this.onSelectNode} />
-                <Description node={this.state.node} />
-            </div>
-        )
+        if (this.state.data === null) {
+            return (
+                <h1>Loading</h1>
+            )
+        }
+        else {
+            console.log("Loaded")
+            return (
+                <div>
+                    <Viz data={this.state.data} onSelectNode={this.onSelectNode} />
+                    <Description data={this.state.data} node={this.state.node} />
+                </div>
+            )
+        }
     }
 }
 
