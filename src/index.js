@@ -33,7 +33,7 @@ const y = (i, n, height) => {
     return height / n * i + height / n / 2
 }
 
-const widthPerSequenceEntry = 200;
+const widthPerSequenceEntry = 250;
 const height = 500;
 
 const Viz = ({data, selected, onSelectNode}) => {
@@ -52,11 +52,21 @@ const Viz = ({data, selected, onSelectNode}) => {
         const xCoord = xScale(x)
         const yCoord = y(i, n, height)
 
+        let r = 25
+        switch (data.nodes[key].significance) {
+            case "2":
+                r = 35
+                break
+            case "3":
+                r = 45
+                break
+        }
+
         return (
             <g className={key === selected ? "node selected" : "node"} onClick={() => onSelectNode(key)}>
-                <text x={xCoord} y={x % 2 === 0 ? yCoord-60 : yCoord+80} textAnchor="middle">{data.nodes[key].title}</text>
-                <circle className={"outer " + data.nodes[key].colour} key={key} r="30" cx={xCoord} cy={yCoord} fill="black" />
-                <circle className="hollow" key={key + "hollow"} r="20" cx={xCoord} cy={yCoord} fill="white" />
+                <text x={xCoord} y={x % 2 === 0 || (n > 1 && i === 0) ? yCoord-r-20 : yCoord+40+r} textAnchor="middle">{data.nodes[key].shortTitle === "" ? data.nodes[key].title : data.nodes[key].shortTitle}</text>
+                <circle className={"outer " + data.nodes[key].colour} key={key} r={r} cx={xCoord} cy={yCoord} fill="black" />
+                <circle className="hollow" key={key + "hollow"} r={r*3/4} cx={xCoord} cy={yCoord} fill="white" />
             </g>
         )
     })
@@ -67,7 +77,7 @@ const Viz = ({data, selected, onSelectNode}) => {
         const b = getNodePosition(data, edge[1])
 
         return (
-            <line key={i} stroke="black" strokeWidth="2px" x1={xScale(a.x)} y1={y(a.i,a.n, height)} x2={xScale(b.x)} y2={y(b.i,b.n, height)} />
+            <line key={i} stroke="#acacac" strokeWidth="2px" x1={xScale(a.x)} y1={y(a.i,a.n, height)} x2={xScale(b.x)} y2={y(b.i,b.n, height)} />
         )
     })
 
