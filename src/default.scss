@@ -3,6 +3,10 @@
   padding: 0;
 }
 
+#root {
+  text-align: center;
+}
+
 p, h1, h2, li, text {
   color: #2c2956;
 }
@@ -66,6 +70,8 @@ svg {
 }
 
 .Description {
+
+  text-align: left;
 
   width: 100%;
   margin: 0 auto 50px;
@@ -191,8 +197,4 @@ svg {
 	display: inline-block;
   }
 
-}
-
-#root {
-  text-align: center;
 }
