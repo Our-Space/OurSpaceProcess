@@ -2,6 +2,7 @@ import React from 'react'
 import {render} from 'react-dom'
 import * as d3 from 'd3'
 import Tabletop from "tabletop"
+import Markdown from "react-remarkable"
 require("./default.scss")
 
 const getNodePosition = (data, node) => {
@@ -90,11 +91,11 @@ const Description = ({data, node}) => (
             <h1>{data.nodes[node].title}</h1>
             <h2>/ {data.nodes[node].time}</h2>
         </div>
-        <div className="description">
-            <p>{data.nodes[node].description}</p>
+        <div className="descriptionA">
+            <Markdown>{data.nodes[node].descriptionA}</Markdown>
         </div>
-        <div className="feedback">
-            <p>{data.nodes[node].feedback}</p>
+        <div className="descriptionB">
+            <Markdown>{data.nodes[node].descriptionB}</Markdown>
         </div>
     </div>
 )

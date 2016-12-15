@@ -35,14 +35,17 @@ svg {
 
   width: 100%;
 
-  .header, .description, .feedback {
+  .header {
+	width: 24%;
+  }
+
+  .header, .descriptionA, .descriptionB {
 	vertical-align: top;
 	display: inline-block;
-	width: 33%;
 	padding: 0 25px;
   }
 
-  .header, .description {
+  .header, .descriptionA  {
 	border-right: 2px solid #2c2956;
 	padding-bottom: 40px;
   }
@@ -64,23 +67,23 @@ svg {
 	}
   }
 
-  .description p, .feedback p {
-	font: 500 0.9rem "Crimson Text";
-	line-height: 1.6rem;
-  }
+  .descriptionA, .descriptionB {
+	width: 38%;
 
-  .description {
+	p {
+	  margin-top: 5px;
+	  font: 500 0.9rem "Crimson Text";
+	  line-height: 1.6rem;
+	  margin-bottom: 15px;
+	}
 
-  }
+	h1 {
+	  font: 300 1.2rem "Oswald";
+	  text-transform: uppercase;
+	}
 
-  .feedback {
-
-  }
-
-
-
-  p {
-	margin-top: 5px;
-	font: 500 20px "Source Sans Pro";
+	ul {
+	  margin-left: 40px;
+	}
   }
 }
